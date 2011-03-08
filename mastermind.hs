@@ -1,12 +1,10 @@
 {- my (=ε/2) haskellous version of the game called mastermind -}
 
-import Data.List.Split 
+import Data.List.Split (splitOneOf)
 {- has to be fetched with 
     foo@bar~> cabal update
     foo@bar~> cabal install split
 -}
-
-import Data.Maybe
 import Random
 
 main = do
