@@ -1,3 +1,5 @@
+module Mastermind (reds, whites) where
+
 {- my (=ε/2) haskellous version of the game called mastermind -}
 
 import Data.List.Split (splitOneOf)
