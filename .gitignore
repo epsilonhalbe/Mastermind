@@ -1,3 +1,5 @@
 *.hi
 *.o
 Mastermind
+mm.t
+report.html
