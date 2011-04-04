@@ -1,5 +1,5 @@
 all :
-	ghc --make mastermind.hs
+	ghc --make -Wall mastermind.hs
 
 clean : 
 	rm -f mastermind mastermind.hi mastermind.o
