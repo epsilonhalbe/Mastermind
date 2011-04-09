@@ -8,11 +8,15 @@ import Data.List.Split (splitOneOf)
     foo@bar~> cabal install split
 -}
 import Random
+import Data.Maybe
+import Control.Applicative 
 
 main = do
 	putStrLn "\nplease do give me a length"
-	let laength = 4 {- still hard coded fixeme -}
-	let colours = 5 {-         --"--           -}
+	laength <- parseInt <$> getLine
+	putStrLn "\n uuhm and the number of colours would be cool too"
+	colours <- parseInt <$> getLine
+	putStrLn ("laength="++show(laength)++" and colours="++show(colours))
 	list_of_randoms <- return (take laength (randomRs (1,colours) (mkStdGen 42)::[Int])){-todo mkStdGen with system time-}
 	game_loop list_of_randoms
 	putStrLn "\nWant to play again??"
@@ -29,14 +33,14 @@ main = do
 
 {-the tricky thing about haskell is the return values - so i left it in this case - otherwise the type checker won't let me pass -}
 game_loop list_of_randoms = do
-	list_of_guesses <- get_n_check_guesslist
+	list_of_guesses <- safe_get_n_check_guesslist
 	if (list_of_guesses == list_of_randoms)
 		then putStrLn "\ncorrect guess"
 		else do
 			putStrLn (show ((reds list_of_randoms list_of_guesses) ++ (whites list_of_randoms list_of_guesses)))
 			game_loop list_of_randoms
 
-reds :: (Num a) => [a]->[a]->[a]{-denotes the right colors & right positions -}
+reds :: (Num a) => [a]->[a]->[a]{-denotes the right colours & right positions -}
 reds randoms guesses = filter (==0) (zipWith (-) randoms guesses)
 {- reds [1,2,3,4,5] [5,4,3,2,1] ~~> filter (==0) [-4,-2,0,2,5] ~~> [0] -}
 
@@ -47,7 +51,7 @@ whites randoms guesses = map (const 1) (
 {- 
 whites [1,2,3,4,5] [5,4,3,2,1] 
 ~~>        filter (\x -> elem x [5,4,3,2,1]) (zipWith (*) [1,2,3,4,5] [1,1,0,1,1] 
-~~>        filter (\x -> elem x [5,4,3,2,1]) [1,2,0,4,5] {- essentially deletes the "red" guesses-}
+~~>        filter (\x -> elem x [5,4,3,2,1]) [1,2,0,4,5] {- essentially deletes the "red" guesses -}
 ~~>        [1,2,4,5]
 ~~>        map (const 1) [1,2,4,5] ~~> [1,1,1,1]
 
@@ -60,6 +64,25 @@ helper [1,2,3,4,5] [5,4,3,2,1]
         | x == 0 = 0
         | otherwise = 1 -}
 -}
+
+--parse input from getLine
+maybeReads :: Read a => String -> Maybe a
+maybeReads = fmap fst . listToMaybe . reads
+
+--parse int from getLine
+--default_on_empty :: a -> Int
+--default_or_parseInt dvalue a = if a == [] then dvalue else a
+parseInt :: String -> Int
+parseInt = head . parseInts
+
+
+parseInts :: String -> [Int]
+parseInts = catMaybes . map maybeReads . splitOneOf ",.;: "
+
+safe_get_n_check_guesslist :: IO [Int]
+safe_get_n_check_guesslist = do
+	putStrLn "\nplease do give me a sequence of 4 numbers between 1 and 5 separated by \",\"" {- 4 should be replaced by 'length' and 5 by 'colours' - fixeme -}
+	parseInts <$> getLine
 
 get_n_check_guesslist :: IO [Int]
 get_n_check_guesslist = do
