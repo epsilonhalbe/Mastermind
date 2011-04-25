@@ -1,4 +1,4 @@
---module Mastermind (reds, whites, parseInts) where
+module Mastermind (reds, whites, parseInts) where
 
 {- my (=ε/2) haskellous version of the game called mastermind -}
 
@@ -7,10 +7,10 @@ import Data.List.Split (splitOneOf)
     foo@bar~> cabal update
     foo@bar~> cabal install split
 -}
-import Random
-import Data.Maybe
-import Control.Applicative
-import System.IO
+import Random (newStdGen, randomRs)
+import Data.Maybe (listToMaybe, catMaybes)
+import Control.Applicative ((<$>))
+import System.IO (hSetBuffering, stdin, BufferMode(NoBuffering,LineBuffering))
 
 main :: IO ()
 main = do
