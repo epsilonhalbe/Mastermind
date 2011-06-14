@@ -3,6 +3,7 @@
 {- my (=ε/2) haskellous version of the game called mastermind -}
 
 > import Data.List.Split ( splitOneOf )
+> import Data.List ( delete )
 
 -- | has to be fetched with
 -- >>> foo@bar~> cabal update
@@ -106,10 +107,14 @@
 > --         | otherwise = 1
 > -- @
 
-> whites :: (Num a) => [a]->[a]->[a]
-> whites randoms guesses = map (const 1) (
->     filter (\x -> elem x guesses) (zipWith (*) randoms helper))
+> whites :: (Num a) => [a] -> [a] -> [a]
+> whites randoms guesses = map (const 1) (w [] guesses cleaned)
 >         where helper = (map (signum.abs) (zipWith (-) randoms guesses))
+>               cleaned = zipWith (*) randoms helper
+>               w xs [] _ = xs
+>               w xs (g:gs) rs
+>                   | (elem g rs) = w (g:xs) gs (delete g rs)
+>                   | otherwise   = w xs gs rs
 
 > -- | /maybeReads/ safely parses input from getLine
 
